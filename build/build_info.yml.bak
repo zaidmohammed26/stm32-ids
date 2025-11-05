@@ -1,0 +1,58 @@
+cmake:
+  application:
+    configuration-dir: '/home/zaid/stm32_ids'
+    source-dir: '/home/zaid/stm32_ids'
+  board:
+    name: 'nucleo_f767zi'
+    path:
+     - '/home/zaid/zephyrproject/zephyr/boards/st/nucleo_f767zi'
+    qualifiers: 'stm32f767xx'
+    revision: ''
+  devicetree:
+    bindings-dirs:
+     - '/home/zaid/zephyrproject/zephyr/dts/bindings'
+    files:
+     - '/home/zaid/zephyrproject/zephyr/boards/st/nucleo_f767zi/nucleo_f767zi.dts'
+    include-dirs:
+     - '/home/zaid/zephyrproject/modules/hal/ambiq/dts'
+     - '/home/zaid/zephyrproject/modules/hal/atmel/include'
+     - '/home/zaid/zephyrproject/modules/hal/bouffalolab/include'
+     - '/home/zaid/zephyrproject/modules/hal/bouffalolab/include/zephyr'
+     - '/home/zaid/zephyrproject/modules/hal/gigadevice/include'
+     - '/home/zaid/zephyrproject/modules/hal/microchip/include'
+     - '/home/zaid/zephyrproject/modules/hal/microchip/dts'
+     - '/home/zaid/zephyrproject/modules/hal/nuvoton/dts'
+     - '/home/zaid/zephyrproject/modules/hal/nxp/dts'
+     - '/home/zaid/zephyrproject/modules/hal/stm32/dts'
+     - '/home/zaid/zephyrproject/modules/hal/ti/dts'
+     - '/home/zaid/zephyrproject/zephyr/include'
+     - '/home/zaid/zephyrproject/zephyr/include/zephyr'
+     - '/home/zaid/zephyrproject/zephyr/dts/common'
+     - '/home/zaid/zephyrproject/zephyr/dts/vendor'
+     - '/home/zaid/zephyrproject/zephyr/dts/rx'
+     - '/home/zaid/zephyrproject/zephyr/dts/x86'
+     - '/home/zaid/zephyrproject/zephyr/dts/xtensa'
+     - '/home/zaid/zephyrproject/zephyr/dts/sparc'
+     - '/home/zaid/zephyrproject/zephyr/dts/riscv'
+     - '/home/zaid/zephyrproject/zephyr/dts/posix'
+     - '/home/zaid/zephyrproject/zephyr/dts/arm64'
+     - '/home/zaid/zephyrproject/zephyr/dts/arm'
+     - '/home/zaid/zephyrproject/zephyr/dts/arc'
+     - '/home/zaid/zephyrproject/zephyr/dts'
+  kconfig:
+    files:
+     - '/home/zaid/zephyrproject/zephyr/boards/st/nucleo_f767zi/nucleo_f767zi_defconfig'
+     - '/home/zaid/stm32_ids/prj.conf'
+    user-files:
+     - '/home/zaid/stm32_ids/prj.conf'
+  toolchain:
+    name: 'zephyr'
+    path: '/home/zaid/zephyr-sdk-0.17.4'
+  zephyr:
+    version: '4.3.0-rc1'
+    zephyr-base: '/home/zaid/zephyrproject/zephyr'
+version: '0.1.0'
+west:
+  command: '/home/zaid/zephyrproject/.venv/bin/west build -b nucleo_f767zi .'
+  topdir: '/home/zaid/zephyrproject'
+  version: '1.5.0'
