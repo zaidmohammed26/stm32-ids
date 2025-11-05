@@ -1,2 +1,0 @@
-# Load Zephyr board Kconfig descriptions.
-osource "/home/zaid/zephyrproject/zephyr/boards/st/nucleo_f767zi/Kconfig"
