@@ -72,7 +72,7 @@ void capture_thread(void *p1,void *p2,void *p3){
 		}
 		else{
 			printf("unable to capture packet\n");
-			k_sleep(K_FOREVER);
+			// k_sleep(K_FOREVER);
 		}
 		
 	}
@@ -85,7 +85,7 @@ void parser_thread(void *p1, void *p2, void *p3)
         int r = k_msgq_get(&packet_q, &p_d, K_FOREVER);
         if (r < 0) {
             printf("unable to get msg from queue\n");
-            continue; // Go to next loop
+            continue; 
         }
 
         struct net_pkt *pkt = p_d.pkt;
@@ -97,19 +97,22 @@ void parser_thread(void *p1, void *p2, void *p3)
         const char *proto;
         size_t len;
 
-        // --- THIS IS THE CORRECTED LOGIC ---
 
         if (eth_hdr->type == htons(NET_ETH_PTYPE_IP)) {
-            // It's IPv4. 
-            
-            // --- THIS IS THE FIX ---
-            // Manually calculate the IP header's start position
             struct net_ipv4_hdr *ipv4_hdr = (struct net_ipv4_hdr *)((uint8_t *)eth_hdr + sizeof(struct net_eth_hdr));
-            // --- END FIX ---
-
             switch (ipv4_hdr->proto) {
-                case IPPROTO_TCP: proto = "TCP"; break;
-                case IPPROTO_UDP: proto = "UDP"; break;
+				case IPPROTO_TCP:
+				proto = "TCP";
+				struct net_tcp_hdr *tcp_hdr = (struct net_tcp_hdr *)((uint8_t *)ipv4_hdr + (ipv4_hdr->vhl & 15)*4);
+				src_port= ntohs(tcp_hdr->src_port);
+				dst_port = ntohs(tcp_hdr->dst_port);
+				  break;
+                case IPPROTO_UDP: 
+				proto = "UDP";
+				struct net_udp_hdr *udp_hdr = (struct net_udp_hdr *)((uint8_t *)ipv4_hdr + (ipv4_hdr->vhl & 15)*4);
+				src_port= ntohs(udp_hdr->src_port);
+				dst_port = ntohs(udp_hdr->dst_port);
+				 break;
                 case IPPROTO_ICMP: proto = "ICMP"; break;
                 default: proto = "<unknown>"; break;
             }
@@ -118,14 +121,11 @@ void parser_thread(void *p1, void *p2, void *p3)
             dst_addr = net_addr_ntop(AF_INET, &ipv4_hdr->dst, dst_addr_buf, sizeof(dst_addr_buf));
             len = net_pkt_get_len(pkt);
 
-            // Now, this printf will show the *correct* data!
-            printf("IPV4: %s -> %s (%s, %d bytes)\n", src_addr, dst_addr, proto, len);
+            printf("IPV4: %s:%u -> %s:%u (%s, %d bytes)\n", src_addr,src_port, dst_addr, dst_port,proto, len);
 
         } else if (eth_hdr->type == htons(NET_ETH_PTYPE_IPV6)) {
             
-            // --- THIS IS THE FIX ---
             struct net_ipv6_hdr *ipv6_hdr = (struct net_ipv6_hdr *)((uint8_t *)eth_hdr + sizeof(struct net_eth_hdr));
-            // --- END FIX ---
 
             switch (ipv6_hdr->nexthdr) {
                 case IPPROTO_TCP: proto = "TCP"; break;
@@ -141,13 +141,10 @@ void parser_thread(void *p1, void *p2, void *p3)
             printf("IPV6: %s -> %s (%s, %d bytes)\n", src_addr, dst_addr, proto, len);
         
         } else {
-            // It's not IP. Print, release, and continue
             printf("Ignoring non-IP packet (Type: 0x%04x)\n", ntohs(eth_hdr->type));
         }
 
-        // --- END OF CORRECTED LOGIC ---
 
-        // Finally, release the packet
         net_pkt_unref(pkt);
     }
 }
